@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+class FindingTargetUsingArray {
+public:
+    std::vector<int> sumOfTwo(std::vector<int>& numbers, int target) {
+        std::unordered_map<int, int> numMap; // map from number to its index
+        
+        for (int i = 0; i < numbers.size(); ++i) {
+            int complement = target - numbers[i];
+            
+            // Check if the complement value exists in the map
+            auto it = numMap.find(complement);
+            if (it != numMap.end()) {
+                // Return the indices
+                return {it->second, i};
+            }
+            
+            // Otherwise, add the current number and its index to the map
+            numMap[numbers[i]] = i;
+        }
+        
+        // No valid indices found (though problem guarantees exactly one solution)
+        return {};
+    }
+};
+
+int main() {
+    FindingTargetUsingArray findTarget;
+
+    // initializing a array with 6 elements and declaring a target.
+    std::vector<int> numbers2 = {8, 7, 3, 6, 3, 2};
+    int target2 = 10;
+    std::vector<int> result2 = findTarget.sumOfTwo(numbers2, target2);
+    
+    // The Output give the index points
+    if (result2.size() == 2) {
+        std::cout << "Example 2 Output: [" << result2[0] << ", " << result2[1] << "]" << std::endl;
+    } else {
+        std::cout << "No valid indices found." << std::endl;
+    }
+
+    return 0;
+}
