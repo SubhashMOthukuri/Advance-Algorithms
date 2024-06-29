@@ -1,0 +1,65 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+/**
+ * @brief Class FindingTargetUsingArray
+ * 
+ * This class provides a method to find indices of two numbers in an array
+ * that add up to a specified target.
+ */
+class FindingTargetUsingArray {
+public:
+    /**
+     * @brief Finds two numbers in the array that sum up to the target.
+     * 
+     * @param numbers The array of integers.
+     * @param target The target sum.
+     * @return std::vector<int> Indices of the two numbers that sum up to target.
+     *         Empty vector if no such pair exists.
+     */
+    std::vector<int> sumOfTwo(std::vector<int>& numbers, int target) {
+        std::unordered_map<int, int> numMap; // map from number to its index
+        
+        for (int i = 0; i < numbers.size(); ++i) {
+            int complement = target - numbers[i];
+            
+            // Check if the complement value exists in the map
+            auto it = numMap.find(complement);
+            if (it != numMap.end()) {
+                // Return the indices of the found pair
+                return {it->second, i};
+            }
+            
+            // Otherwise, add the current number and its index to the map
+            numMap[numbers[i]] = i;
+        }
+        
+        // No valid indices found (though problem guarantees exactly one solution)
+        return {};
+    }
+};
+
+int main() {
+    FindingTargetUsingArray findTarget;
+
+    // first
+    std::vector<int> numbers2 = {8, 7, 3, 6, 3, 2};
+    int target2 = 10;
+    std::vector<int> result2 = findTarget.sumOfTwo(numbers2, target2);
+
+    // second
+    std::vector<int> numbers3 = {2, 3, 2};
+    int target2 = 10;
+    std::vector<int> result3 = findTarget.sumOfTwo(numbers2, target2);
+
+    
+    // Output the result
+    if (result2.size() == 2) {
+        std::cout << "Example 2 Output: [" << result2[0] << ", " << result2[1] << "]" << std::endl;
+    } else {
+        std::cout << "No valid indices found." << std::endl;
+    }
+
+    return 0;
+}
