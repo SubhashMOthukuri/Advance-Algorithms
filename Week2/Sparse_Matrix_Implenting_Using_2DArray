@@ -1,0 +1,50 @@
+#include <iostream>   // Standard input/output stream library for cin, cout
+#include <vector>     // Standard vector library for dynamic arrays
+
+using namespace std;  // Standard namespace for convenience
+
+/**
+ * @brief Prints a 2D matrix of integers to the console.
+ * 
+ * @param matrix The matrix to be printed (vector of vectors).
+ */
+void printMatrix(const vector<vector<int>>& matrix) {
+    for (const auto& row : matrix) {   // Iterate over each row of the matrix
+        for (int value : row) {        // Iterate over each element in the row
+            cout << value << " ";      // Print the value followed by a space
+        }
+        cout << endl;                  // Move to the next line after printing a row
+    }
+}
+
+/**
+ * @brief Main function to demonstrate matrix input and output.
+ * 
+ * @return int Returns 0 to indicate successful execution.
+ */
+int main() {
+    int numRows, numCols;  // Number of rows and columns in the matrix
+
+    // Step 1: Get matrix dimensions from user
+    cout << "Enter number of rows in the matrix: ";  // Prompt for rows
+    cin >> numRows;                                 // Read rows from input
+    cout << "Enter number of columns in the matrix: ";  // Prompt for columns
+    cin >> numCols;                                 // Read columns from input
+
+    // Step 2: Initialize matrix with user-defined size
+    vector<vector<int>> matrix(numRows, vector<int>(numCols));  // 2D vector (matrix) of integers
+
+    // Step 3: Populate matrix with user input
+    cout << "Enter elements of the matrix:" << endl;  // Prompt for matrix elements
+    for (int i = 0; i < numRows; ++i) {               // Loop through each row
+        for (int j = 0; j < numCols; ++j) {           // Loop through each column in the current row
+            cin >> matrix[i][j];                      // Read and store each element in the matrix
+        }
+    }
+
+    // Step 4: Print the matrix
+    cout << "\nEntered Matrix:" << endl;   // Print a message indicating the output
+    printMatrix(matrix);                   // Call function to print the matrix
+
+    return 0;  // Return 0 to indicate successful program execution
+}
