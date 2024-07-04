@@ -1,0 +1,167 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// Structure for each node in the linked list
+struct MatrixNode {
+    int rowIdx;         /**< Row index of the matrix element */
+    int colIdx;         /**< Column index of the matrix element */
+    int value;          /**< Value of the matrix element */
+    int refNumber;      /**< Reference number assigned to the node */
+    MatrixNode* next;   /**< Pointer to the next node in the linked list */
+    
+    /**
+     * @brief Constructor to initialize a node with given values.
+     * 
+     * @param row Row index of the matrix element.
+     * @param col Column index of the matrix element.
+     * @param val Value of the matrix element.
+     * @param ref Reference number assigned to the node.
+     */
+    MatrixNode(int row, int col, int val, int ref) {
+        rowIdx = row;
+        colIdx = col;
+        value = val;
+        refNumber = ref;
+        next = nullptr;
+    }
+};
+
+// Class for the sparse matrix using linked list
+class SparseMatrix {
+private:
+    MatrixNode* head;       /**< Pointer to the head of the linked list */
+    int nextRefNumber;      /**< Next reference number to assign to a node */
+
+public:
+    /**
+     * @brief Constructor to initialize an empty sparse matrix.
+     */
+    SparseMatrix() {
+        head = nullptr;
+        nextRefNumber = 1;  // Start reference numbering from 1
+    }
+
+    /**
+     * @brief Method to insert a non-zero element into the sparse matrix.
+     * 
+     * Inserts a new node with the given row index, column index, and value into the sparse matrix.
+     * Nodes are inserted in sorted order based on row and column indices.
+     * 
+     * @param rowIdx Row index of the matrix element to insert.
+     * @param colIdx Column index of the matrix element to insert.
+     * @param value Value of the matrix element to insert.
+     */
+    void insert(int rowIdx, int colIdx, int value) {
+        MatrixNode* newNode = new MatrixNode(rowIdx, colIdx, value, nextRefNumber++);
+        
+        // Insert newNode in sorted order based on row and column indices
+        if (head == nullptr || (rowIdx < head->rowIdx) || (rowIdx == head->rowIdx && colIdx < head->colIdx)) {
+            newNode->next = head;
+            head = newNode;
+        } else {
+            MatrixNode* current = head;
+            while (current->next != nullptr && (current->next->rowIdx < rowIdx || 
+                    (current->next->rowIdx == rowIdx && current->next->colIdx < colIdx))) {
+                current = current->next;
+            }
+            newNode->next = current->next;
+            current->next = newNode;
+        }
+    }
+
+    /**
+     * @brief Method to display the sparse matrix in matrix format.
+     * 
+     * Displays the sparse matrix in a matrix format, where each non-zero element is printed at its
+     * corresponding row and column index. The matrix is printed with zero-filled spaces for empty
+     * elements. Also displays a reference matrix where each element shows the reference number of 
+     * the corresponding node in the sparse matrix.
+     */
+    void displayMatrix() {
+        cout << "\nSparse Matrix:" << endl;
+
+        // Find maximum row and column indices to determine matrix size
+        int maxRowIdx = -1, maxColIdx = -1;
+        MatrixNode* current = head;
+        while (current != nullptr) {
+            if (current->rowIdx > maxRowIdx) maxRowIdx = current->rowIdx;
+            if (current->colIdx > maxColIdx) maxColIdx = current->colIdx;
+            current = current->next;
+        }
+
+        // Create a matrix with appropriate dimensions using std::vector
+        vector<vector<int>> matrix(maxRowIdx + 1, vector<int>(maxColIdx + 1, 0)); // Initialize matrix with zeros
+        
+        // Populate the matrix with node values
+        current = head;
+        while (current != nullptr) {
+            matrix[current->rowIdx][current->colIdx] = current->value;
+            current = current->next;
+        }
+        
+        // Print the matrix
+        cout << "\nMatrix:" << endl;
+        for (int i = 0; i <= maxRowIdx; ++i) {
+            for (int j = 0; j <= maxColIdx; ++j) {
+                cout << matrix[i][j] << "\t";
+            }
+            cout << endl;
+        }
+
+        // Display the reference matrix
+        cout << "\nReference Matrix (starting from 1):" << endl;
+        cout << "Ref\tRow\tCol\tValue" << endl;
+        current = head;
+        while (current != nullptr) {
+            cout << current->rowIdx << "\t" << current->colIdx << "\t" << current->value << "\t" << current->refNumber << endl;
+            current = current->next;
+        }
+    }
+
+    /**
+     * @brief Destructor to free allocated memory for the sparse matrix.
+     * 
+     * Frees memory allocated for each node in the sparse matrix linked list.
+     */
+    ~SparseMatrix() {
+        MatrixNode* current = head;
+        while (current != nullptr) {
+            MatrixNode* next = current->next;
+            delete current;
+            current = next;
+        }
+    }
+};
+
+// Main function to test the SparseMatrix class
+int main() {
+    SparseMatrix matrix;
+
+    // Prompt user for matrix elements input
+    cout << "Enter matrix elements (row index, column index, value)." << endl;
+    cout << "Enter 'STOP' to end input." << endl;
+
+    // Loop to insert elements into the sparse matrix
+    while (true) {
+        string input;
+        cout << "Enter row index, column index, value (or 'STOP' to end): ";
+        cin >> input;
+
+        if (input == "STOP") {
+            break; // End input
+        }
+
+        int rowIdx = stoi(input); // Convert string to int for row index
+        int colIdx, value;
+        cin >> colIdx >> value;
+
+        matrix.insert(rowIdx, colIdx, value);
+    }
+
+    // Display the sparse matrix
+    matrix.displayMatrix();
+
+    return 0;
+}
