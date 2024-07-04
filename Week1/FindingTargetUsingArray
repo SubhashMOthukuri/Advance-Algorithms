@@ -48,11 +48,6 @@ int main() {
     int target2 = 10;
     std::vector<int> result2 = findTarget.sumOfTwo(numbers2, target2);
 
-    // second
-    std::vector<int> numbers3 = {2, 3, 2};
-    int target2 = 10;
-    std::vector<int> result3 = findTarget.sumOfTwo(numbers2, target2);
-
     
     // Output the result
     if (result2.size() == 2) {
@@ -63,4 +58,3 @@ int main() {
 
     return 0;
 }
-
