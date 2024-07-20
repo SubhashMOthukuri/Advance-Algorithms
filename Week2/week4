@@ -1,0 +1,123 @@
+#include <iostream>
+#include <vector>
+#include <climits>
+#include <queue>
+#include <utility> // for std::pair
+
+using namespace std;
+
+#define INF INT_MAX
+
+/**
+ * @brief Recursively prints the shortest path from the start node to the end node.
+ * 
+ * @param parent A vector where parent[i] holds the predecessor of node i in the shortest path tree.
+ * @param j The current node being processed for path printing.
+ */
+void printPath(const vector<int>& parent, int j) {
+    // Base case: if the parent of j is -1, it means j is the start node
+    if (parent[j] == -1) {
+        cout << j << " ";
+        return;
+    }
+    // Recursively print the path from the parent of j
+    printPath(parent, parent[j]);
+    // Print the current node
+    cout << j << " ";
+}
+
+/**
+ * @brief Computes the shortest path from a start node to an end node using Dijkstra's Algorithm.
+ * 
+ * @param graph An adjacency matrix representing the graph where graph[i][j] is the weight of the edge from node i to node j.
+ * @param start The starting node for the shortest path computation.
+ * @param end The ending node for which the shortest path is to be found.
+ */
+void dijkstra(const vector<vector<int>>& graph, int start, int end) {
+    int V = graph.size(); // Number of nodes in the graph
+    
+    // Initialize distance vector with infinity and parent vector with -1
+    vector<int> dist(V, INF); // Distance from start to each node
+    vector<int> parent(V, -1); // To store the shortest path tree
+    vector<bool> visited(V, false); // Visited status of each node
+    
+    // Priority queue to select the node with the smallest distance
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    
+    // Set the distance to the start node as 0 and push it into the priority queue
+    pq.push({0, start});
+    dist[start] = 0;
+    
+    while (!pq.empty()) {
+        // Select the unvisited node with the smallest distance
+        int u = pq.top().second;
+        pq.pop();
+        
+        // Skip if this node has already been visited
+        if (visited[u])
+            continue;
+        
+        // Mark the node as visited
+        visited[u] = true;
+        
+        // Consider all the unvisited neighbors of the current node
+        for (int v = 0; v < V; ++v) {
+            // Check if the edge u-v exists and v is not yet visited
+            if (!visited[v] && graph[u][v] != 0) {
+                // Calculate the distance from start to neighbor v
+                if (dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                    // Update distance and parent for v
+                    dist[v] = dist[u] + graph[u][v];
+                    pq.push({dist[v], v});
+                    parent[v] = u;
+                }
+            }
+        }
+    }
+    
+    // Output the shortest path and distance from start to end
+    if (dist[end] == INF) {
+        cout << "No path exists from " << start << " to " << end << endl;
+    } else {
+        cout << "The shortest path from " << start << " to " << end << " is: ";
+        printPath(parent, end);
+        cout << "\nThe cost of the shortest path is: " << dist[end] << endl;
+    }
+}
+
+/**
+ * @brief Main function to read input and execute Dijkstra's algorithm.
+ * 
+ * @return int Exit status code.
+ */
+int main() {
+    int V, E;
+    cout << "Enter the number of nodes: ";
+    cin >> V;
+
+    // Create an adjacency matrix for the graph with V nodes
+    vector<vector<int>> graph(V, vector<int>(V, 0));
+
+    cout << "Enter the number of edges: ";
+    cin >> E;
+
+    cout << "Enter the edges in the format: start end weight" << endl;
+    // Read edges and weights
+    for (int i = 0; i < E; ++i) {
+        int u, v, weight;
+        cin >> u >> v >> weight;
+        graph[u][v] = weight; // Assuming the graph is undirected; remove this line if directed
+        graph[v][u] = weight; // Assuming the graph is undirected; remove this line if directed
+    }
+
+    int start, end;
+    cout << "Enter start node: ";
+    cin >> start;
+    cout << "Enter end node: ";
+    cin >> end;
+
+    // Compute shortest path from start to end
+    dijkstra(graph, start, end);
+    
+    return 0;
+}
