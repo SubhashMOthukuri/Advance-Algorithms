@@ -3,108 +3,64 @@
 #include <string>
 
 /**
- * @brief Prints the 2D Dynamic Programming table showing lengths of common suffixes between substrings.
+ * @brief Prints the 2D Dynamic Programming table.
  * 
- * @param dp 2D vector containing lengths of common suffixes.
+ * @param dp 2D vector with lengths of common suffixes.
  * @param s1 First input string.
  * @param s2 Second input string.
  */
 void printDynamicProgrammingTable(const std::vector<std::vector<int>>& dp, const std::string& s1, const std::string& s2) {
-    std::cout << "Dynamic Programming Table:" << std::endl;
-
-    // Print column headers (characters of s2)
-    std::cout << "    ";
-    for (char ch : s2) {
-        std::cout << " " << ch << " ";
-    }
-    std::cout << std::endl;
-
-    // Print rows of the Dynamic Programming table
+    std::cout << "Dynamic Programming Table:\n    ";
+    for (char ch : s2) std::cout << " " << ch << " ";
+    std::cout << '\n';
+    
     for (size_t i = 0; i < dp.size(); ++i) {
-        // Print row header (characters of s1 or space for row 0)
-        if (i == 0) {
-            std::cout << " ";
-        } else {
-            std::cout << s1[i - 1] << " ";
-        }
-
-        // Print values in the Dynamic Programming table
-        for (size_t j = 0; j < dp[i].size(); ++j) {
-            std::cout << dp[i][j] << " ";
-        }
-        std::cout << std::endl;
+        std::cout << (i ? s1[i - 1] : ' ') << " ";
+        for (size_t j = 0; j < dp[i].size(); ++j) std::cout << dp[i][j] << " ";
+        std::cout << '\n';
     }
 }
 
 /**
- * @brief Finds the longest common substring between two strings using dynamic programming.
+ * @brief Finds the longest common substring using dynamic programming.
  * 
  * @param s1 First input string.
  * @param s2 Second input string.
- * @return A pair containing the longest common substring and its length.
+ * @return A pair with the longest common substring and its length.
  */
 std::pair<std::string, int> longestCommonSubstringUsingDynamicProgramming(const std::string& s1, const std::string& s2) {
-    int m = s1.size();
-    int n = s2.size();
-
-    // Create a 2D Dynamic Programming table with dimensions (m+1) x (n+1) initialized to 0
+    int m = s1.size(), n = s2.size();
     std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1, 0));
+    int max_length = 0, end_index_s1 = 0;
 
-    int max_length = 0;       // Maximum length of common substring found
-    int end_index_s1 = 0;     // Ending index of the longest common substring in s1
-
-    // Fill the Dynamic Programming table
     for (int i = 1; i <= m; ++i) {
         for (int j = 1; j <= n; ++j) {
-            // If characters match, update the Dynamic Programming table entry
             if (s1[i - 1] == s2[j - 1]) {
                 dp[i][j] = dp[i - 1][j - 1] + 1;
-                // Update maximum length and end index if a longer substring is found
                 if (dp[i][j] > max_length) {
                     max_length = dp[i][j];
                     end_index_s1 = i;
                 }
-            } else {
-                dp[i][j] = 0;  // Reset if characters do not match
             }
         }
     }
 
-    // Extract the longest common substring
-    int start_index_s1 = end_index_s1 - max_length;
-    std::string longest_substring = s1.substr(start_index_s1, max_length);
-
-    // Print the Dynamic Programming table
+    std::string longest_substring = s1.substr(end_index_s1 - max_length, max_length);
     printDynamicProgrammingTable(dp, s1, s2);
-
     return {longest_substring, max_length};
 }
 
 int main() {
     std::string s1, s2;
+    std::cout << "Enter the first string: "; std::cin >> s1;
+    std::cout << "Enter the second string: "; std::cin >> s2;
 
-    // Prompt the user to enter the first string
-    std::cout << "Enter the first string: ";
-    std::cin >> s1;
-
-    // Prompt the user to enter the second string
-    std::cout << "Enter the second string: ";
-    std::cin >> s2;
-
-    // Check if the strings are of the same length
     if (s1.size() != s2.size()) {
-        std::cerr << "Strings must be of the same length." << std::endl;
-        return 1;  // Exit with error code
+        std::cerr << "Strings must be of the same length.\n"; return 1;
     }
 
-    // Compute the longest common substring using Dynamic Programming
     auto result = longestCommonSubstringUsingDynamicProgramming(s1, s2);
-
-    // Output the results
-    std::cout << "Longest common substring: " << result.first << std::endl;
-    std::cout << "Length of longest common substring: " << result.second << std::endl;
-
-    return 0;  // Exit with success code
+    std::cout << "Longest common substring: " << result.first << '\n';
+    std::cout << "Length of longest common substring: " << result.second << '\n';
+    return 0;
 }
-
-
