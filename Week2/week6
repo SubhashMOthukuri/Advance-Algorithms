@@ -1,0 +1,123 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <unordered_map>
+#include <string>
+#include <sstream>
+
+using namespace std;
+
+// Define a structure for the Huffman Tree Node
+struct HuffmanNode {
+    char ch;             // Character stored in the node
+    int freq;            // Frequency of the character
+    HuffmanNode* left;   // Pointer to the left child
+    HuffmanNode* right;  // Pointer to the right child
+
+    // Constructor for initializing a HuffmanNode
+    HuffmanNode(char c, int f) : ch(c), freq(f), left(nullptr), right(nullptr) {}
+
+    // Comparator for the priority queue to create a min-heap based on frequency
+    bool operator>(const HuffmanNode& other) const {
+        return freq > other.freq;
+    }
+};
+
+// Function to build the Huffman Tree from characters and their frequencies
+HuffmanNode* buildHuffmanTree(const vector<char>& characters, const vector<int>& frequencies) {
+    // Min-heap (priority queue) to store Huffman nodes
+    priority_queue<HuffmanNode*, vector<HuffmanNode*>, greater<HuffmanNode*>> minHeap;
+
+    // Create Huffman nodes and add them to the min heap
+    for (size_t i = 0; i < characters.size(); ++i) {
+        minHeap.push(new HuffmanNode(characters[i], frequencies[i]));
+    }
+
+    // Construct the Huffman Tree
+    while (minHeap.size() > 1) {
+        // Extract the two nodes with the smallest frequency
+        HuffmanNode* left = minHeap.top();
+        minHeap.pop();
+        HuffmanNode* right = minHeap.top();
+        minHeap.pop();
+
+        // Create an internal node with frequency equal to the sum of the two nodes
+        HuffmanNode* internal = new HuffmanNode('\0', left->freq + right->freq);
+        internal->left = left;
+        internal->right = right;
+
+        // Add the new internal node back to the min heap
+        minHeap.push(internal);
+    }
+
+    // Return the root of the Huffman Tree
+    return minHeap.top();
+}
+
+// Recursive function to generate Huffman codes from the Huffman Tree
+void generateCodes(HuffmanNode* root, string prefix, unordered_map<char, string>& codeMap) {
+    if (!root) return;  // Base case: if the node is null, return
+
+    // If the node is a leaf (contains a character), add its code to the map
+    if (root->ch != '\0') {
+        codeMap[root->ch] = prefix;
+    }
+
+    // Recursively traverse the left and right subtrees
+    generateCodes(root->left, prefix + "0", codeMap);  // Add '0' for left branch
+    generateCodes(root->right, prefix + "1", codeMap); // Add '1' for right branch
+}
+
+// Preorder traversal to print Huffman codes
+void printCodesPreorder(HuffmanNode* root, unordered_map<char, string>& codeMap, string prefix = "") {
+    if (!root) return;  // Base case: if the node is null, return
+
+    // If the node is a leaf (contains a character), add its code to the map
+    if (root->ch != '\0') {
+        codeMap[root->ch] = prefix;
+    }
+
+    // Recursively traverse the left and right subtrees
+    printCodesPreorder(root->left, codeMap, prefix + "0");  // Add '0' for left branch
+    printCodesPreorder(root->right, codeMap, prefix + "1"); // Add '1' for right branch
+}
+
+int main() {
+    string input;
+
+    // Prompt the user to enter a string
+    cout << "Enter a string: ";
+    getline(cin, input);  // Read the entire line of input
+
+    // Calculate the frequency of each character in the string
+    unordered_map<char, int> freqMap;
+    for (char ch : input) {
+        if (ch != ' ') {  // Ignore spaces in the string
+            freqMap[ch]++;
+        }
+    }
+
+    vector<char> characters;
+    vector<int> frequencies;
+
+    // Populate vectors with characters and their frequencies
+    for (const auto& entry : freqMap) {
+        characters.push_back(entry.first);
+        frequencies.push_back(entry.second);
+    }
+
+    // Build the Huffman Tree
+    HuffmanNode* root = buildHuffmanTree(characters, frequencies);
+
+    // Generate Huffman codes for each character
+    unordered_map<char, string> codeMap;
+    printCodesPreorder(root, codeMap);
+
+    // Print the Huffman codes
+    cout << "Huffman Codes:" << endl;
+    for (char ch : characters) {
+        cout << ch << ": " << codeMap[ch] << endl;
+    }
+
+    return 0;
+}
