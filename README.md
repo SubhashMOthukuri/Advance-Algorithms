@@ -48,11 +48,9 @@ Dr. Kamw teaches **Programming and Software Engineering** courses in the Compute
 To explore the implementations, clone this repository and run the algorithms in Python:
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo-name/advanced-algorithms.git
+git clone https://github.com/SubhashMOthukuri/Advance-Algorithms/edit/Advance-Algorithms
 cd advanced-algorithms
 
-# Run an example script
-python dijkstra.py
 ```
 
 ## Contributing
