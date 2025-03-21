@@ -37,9 +37,6 @@ This repository contains learning materials and implementations for **Advanced A
 
 ### **Dr. Farah S. Kamw**
 **Professor, Concordia University Wisconsin**
-
-- **Email**: farah.kamw@cuaa.edu  
-- **Zoom Meeting Room**: 3302457390  
 - **PhD** - Kent State University  
 - **MS** - University of Zakho  
 
